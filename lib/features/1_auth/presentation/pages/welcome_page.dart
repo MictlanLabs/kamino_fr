@@ -44,11 +44,7 @@ class WelcomePage extends StatelessWidget {
                         const SizedBox(height: 50),
 
                         // Asegúrate de que esta imagen exista en 'assets/images/'
-                        Image.asset(
-                          '../assets/images/welcome_graphic.png', 
-                          height: MediaQuery.of(context).size.height * 0.35, 
-                          fit: BoxFit.contain,
-                        ),
+                        
                         const SizedBox(height: 50),
 
                         RichText(
@@ -102,3 +98,4 @@ class WelcomePage extends StatelessWidget {
     );
   }
 }
+

@@ -1,4 +1,5 @@
-// imports
+// Importaciones
+import 'package:kamino_fr/core/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:kamino_fr/core/app_theme.dart';
 import 'package:provider/provider.dart';
@@ -117,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
                             text: 'No tienes cuenta? ',
                             actionText: 'Registrate',
                             onTap: () {
-                              // TODO: Navegar a la pantalla de registro
+                              context.read<AppState>().setPath(AppRoutePath.register);
                             },
                           ),
                           const SizedBox(height: 20.0),

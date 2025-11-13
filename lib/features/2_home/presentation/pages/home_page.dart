@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:geolocator/geolocator.dart' as geo;
 import 'package:kamino_fr/config/environment_config.dart';
 import 'package:kamino_fr/core/app_theme.dart';
 import '../provider/home_provider.dart';
@@ -14,6 +16,37 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  MapboxMap? _mapboxMap;
+
+  Future<void> _enableUserLocation() async {
+    final status = await Permission.locationWhenInUse.request();
+    if (status.isGranted) {
+      await _mapboxMap?.location.updateSettings(
+        LocationComponentSettings(
+          enabled: true,
+          pulsingEnabled: false,
+          locationPuck: LocationPuck(
+            locationPuck3D: LocationPuck3D(
+              modelUri: "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Duck/glTF-Embedded/Duck.gltf",
+            ),
+          ),
+        ),
+      );
+      await _centerCameraOnUser();
+    } else if (status.isPermanentlyDenied) {
+      await openAppSettings();
+    }
+  }
+
+  Future<void> _centerCameraOnUser() async {
+    try {
+      final geoPos = await geo.Geolocator.getCurrentPosition(desiredAccuracy: geo.LocationAccuracy.best);
+      final pos = Position(geoPos.longitude, geoPos.latitude);
+      await _mapboxMap?.setCamera(
+        CameraOptions(center: Point(coordinates: pos), zoom: 14),
+      );
+    } catch (_) {}
+  }
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -33,6 +66,26 @@ class _HomePageState extends State<HomePage> {
                         zoom: 2,
                         bearing: 0,
                         pitch: 0,
+                      ),
+                      onMapCreated: (controller) {
+                        _mapboxMap = controller;
+                        _enableUserLocation();
+                      },
+                    ),
+                  ),
+                  Positioned(
+                    right: 24,
+                    bottom: 60,
+                    child: FloatingActionButton(
+                      backgroundColor: AppTheme.primaryMint,
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      onPressed: _centerCameraOnUser,
+                      child: Icon(
+                        Icons.my_location,
+                        color: AppTheme.textBlack,
                       ),
                     ),
                   ),

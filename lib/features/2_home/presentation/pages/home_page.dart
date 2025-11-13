@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
+import 'package:kamino_fr/config/environment_config.dart';
 import 'package:kamino_fr/core/app_theme.dart';
 import '../provider/home_provider.dart';
 import '../widgets/generation_modal.dart';
@@ -25,12 +27,12 @@ class _HomePageState extends State<HomePage> {
               child: Stack(
                 children: [
                   Positioned.fill(
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage('assets/images/Mapa.webp'),
-                          fit: BoxFit.cover,
-                        ),
+                    child: MapWidget(
+                      cameraOptions: CameraOptions(
+                        center: Point(coordinates: Position(-98.0, 39.5)),
+                        zoom: 2,
+                        bearing: 0,
+                        pitch: 0,
                       ),
                     ),
                   ),

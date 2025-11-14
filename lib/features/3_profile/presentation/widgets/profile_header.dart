@@ -11,55 +11,107 @@ class ProfileHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final u = user;
     final name = u == null ? '' : '${u.firstName} ${u.lastName}';
+    final subtitle = u == null ? '' : 'Perfil ${u.isActive ? 'activo' : 'inactivo'}';
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppTheme.lightMintBackground,
-            AppTheme.primaryMint.withOpacity(0.6),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: Row(
+    return SizedBox(
+      height: 240,
+      child: Stack(
+        clipBehavior: Clip.none,
         children: [
-          CircleAvatar(
-            radius: 36,
-            backgroundColor: AppTheme.background,
-            child: Icon(Icons.person, color: AppTheme.textBlack, size: 36),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
+          Container(
+            height: 180,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppTheme.primaryMint,
+                  AppTheme.primaryMint.withOpacity(0.85),
+                  AppTheme.primaryMintDark.withOpacity(0.9),
+                ],
+              ),
+              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.primaryMint.withOpacity(0.25),
+                  blurRadius: 16,
+                  offset: const Offset(0, 10),
+                )
+              ],
+            ),
+            padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 200),
-                  child: Text(
-                    name.isEmpty ? ' ' : name,
-                    key: ValueKey(name),
-                    style: Theme.of(context).textTheme.titleLarge,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 220),
+                        child: Text(
+                          name.isEmpty ? '' : name,
+                          key: ValueKey(name),
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        subtitle,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Colors.white70,
+                            ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 6),
-                Text(
-                  'Perfil de usuario',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
+                Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.settings),
+                      color: Colors.white,
+                      onPressed: onEdit,
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(Icons.bar_chart, color: Colors.white70),
+                  ],
+                )
               ],
             ),
           ),
-          const SizedBox(width: 12),
-          ElevatedButton(
-            onPressed: onEdit,
-            child: const Text('Editar perfil'),
-          )
+          Positioned(
+            left: 0,
+            right: 0,
+            top: 130,
+            child: Center(
+              child: Container(
+                width: 110,
+                height: 110,
+                decoration: BoxDecoration(
+                  color: AppTheme.background,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.15),
+                      blurRadius: 12,
+                      offset: const Offset(0, 6),
+                    )
+                  ],
+                ),
+                child: CircleAvatar(
+                  radius: 55,
+                  backgroundColor: AppTheme.background,
+                  child: Icon(Icons.person, color: AppTheme.textBlack, size: 48),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 }
-

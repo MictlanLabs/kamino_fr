@@ -13,6 +13,7 @@ import 'package:kamino_fr/features/3_profile/presentation/widgets/profile_header
 import 'package:kamino_fr/features/3_profile/presentation/widgets/info_row.dart';
 import 'package:kamino_fr/features/3_profile/presentation/widgets/status_badge.dart';
 import 'package:kamino_fr/features/3_profile/presentation/widgets/detail_item.dart';
+import 'package:kamino_fr/features/3_profile/presentation/widgets/metric_card.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -87,11 +88,54 @@ class ProfilePage extends StatelessWidget {
                             );
                           },
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 72),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Column(
                             children: [
+                              LayoutBuilder(
+                                builder: (context, c) {
+                                  final isWide = c.maxWidth >= 700;
+                                  final items = [
+                                    MetricCard(
+                                      label: 'Cuenta activa',
+                                      value: (u?.isActive ?? false) ? 'Sí' : 'No',
+                                      icon: Icons.verified_user,
+                                    ),
+                                    MetricCard(
+                                      label: 'Antigüedad (días)',
+                                      value: u == null ? '—' : '${DateTime.now().difference(u.createdAt).inDays}',
+                                      icon: Icons.calendar_today,
+                                    ),
+                                    MetricCard(
+                                      label: 'Última actualización (días)',
+                                      value: u == null ? '—' : '${DateTime.now().difference(u.updatedAt).inDays}',
+                                      icon: Icons.update,
+                                    ),
+                                  ];
+                                  if (isWide) {
+                                    return Row(
+                                      children: [
+                                        Expanded(child: items[0]),
+                                        const SizedBox(width: 12),
+                                        Expanded(child: items[1]),
+                                        const SizedBox(width: 12),
+                                        Expanded(child: items[2]),
+                                      ],
+                                    );
+                                  }
+                                  return Column(
+                                    children: [
+                                      items[0],
+                                      const SizedBox(height: 12),
+                                      items[1],
+                                      const SizedBox(height: 12),
+                                      items[2],
+                                    ],
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 16),
                               InfoRow(
                                 icon: Icons.email_outlined,
                                 label: 'Email',
@@ -157,6 +201,30 @@ class ProfilePage extends StatelessWidget {
                                   );
                                 },
                               ),
+                              const SizedBox(height: 24),
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: theme.cardColor,
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Bitácoras recientes', style: theme.textTheme.titleMedium),
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      children: [
+                                        Expanded(child: _PlaceholderTile(icon: Icons.menu_book, label: 'Sin registros')),
+                                        const SizedBox(width: 12),
+                                        Expanded(child: _PlaceholderTile(icon: Icons.explore, label: 'Explora rutas')),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // sección de características principales eliminada
                             ],
                           ),
                         ),
@@ -181,3 +249,33 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
+class _PlaceholderTile extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  const _PlaceholderTile({required this.icon, required this.label});
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 80,
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).shadowColor.withOpacity(0.06),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: AppTheme.primaryMint),
+          const SizedBox(width: 8),
+          Text(label),
+        ],
+      ),
+    );
+  }
+}

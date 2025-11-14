@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> {
 
   void _startFollow() {
     _posSub?.cancel();
-    _posSub = geo.Geolocator.getPositionStream(locationSettings: const geo.LocationSettings(accuracy: geo.LocationAccuracy.best, distanceFilter: 3))
+    _posSub = geo.Geolocator.getPositionStream(locationSettings: const geo.LocationSettings(accuracy: geo.LocationAccuracy.best, distanceFilter: 10))
         .listen((geoPos) async {
       if (!_followUser) return;
       _lastGeoPos = geoPos;
@@ -118,6 +118,9 @@ class _HomePageState extends State<HomePage> {
                               url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
                               tileSize: 512,
                               maxzoom: 14,
+                              prefetchZoomDelta: 0,
+                              tileRequestsDelay: 0.3,
+                              tileNetworkRequestsDelay: 0.5,
                             ),
                           );
                           await style.setStyleTerrainProperty('source', 'mapbox-dem');
